@@ -9,7 +9,122 @@
 </head>
 
 <body>
-
+    <div class="container">
+        <div class="text-center mg-bot-30">
+            <h1 class="heading">My To-Do List</h1>
+            <p>Stay organized and productive</p>
+        </div>
+        <div class="bg-white border-radius-10 box-shadow pad-30 col gap-20">
+            <form action="summit" class="flex gap-20" id="addForm">
+                <input type="text" placeholder="Add a new task..." class="flex-1" id="inputList">
+                <select name="priority" id="priority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium" selected>Medium Priority</option>
+                    <option value="hight">Hight Priority</option>
+                </select>
+                <button class="btn btn-primary min-w-200" id="addBtn">Add</button>
+            </form>
+            <div class="col gap-20">
+                <div class="flex gap-20">
+                    <h2>Status:</h2>
+                    <button class="btn btn-outline" id="allItems">All</button>
+                    <button class="btn btn-outline" id="activeItems">Active</button>
+                    <button class="btn btn-outline" id="completedItems">Completed</button>
+                </div>
+                <div class="flex gap-20">
+                    <h2>Filter:</h2>
+                    <button class="btn btn-outline" id="filterA">A - Z</button>
+                    <button class="btn btn-outline" id="filterZ">Z - A</button>
+                    <button class="btn btn-outline" id="filterPriority">Priority</button>
+                </div>
+                <div class="flex gap-20">
+                    <h2>Actions:</h2>
+                    <button class="btn btn-outline" id="selectAllItems">Select All</button>
+                    <button class="btn btn-danger" id="deleteAllItems">Delete All</button>
+                </div>
+            </div>
+            <ul class="col gap-10" id="listItems">
+                <li>
+                    <label class="flex gap-20">
+                        <input type="checkbox" class="check-box"> text text text text
+                    </label>
+                    <div class="flex gap-20">
+                        <select name="priority" class="select-item">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="hight">Hight</option>
+                        </select>
+                        <button class="action-btn edit-btn">✏️</button>
+                        <button class="action-btn delete-btn">🗑️</button>
+                    </div>
+                </li>
+                <li class="checked">
+                    <label class="flex gap-20">
+                        <input type="checkbox" class="check-box"> text text text text
+                    </label>
+                    <div class="flex gap-20">
+                        <select name="priority" class="select-item">
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="hight">Hight</option>
+                        </select>
+                        <button class="action-btn edit-btn">✏️</button>
+                        <button class="action-btn delete-btn">🗑️</button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="popup-overlay" id="popupEmpty">
+            <div class="popup-content col gap-20 text-center bg-white box-shadow pad-30 border-radius-10 box-shadow ">
+                <h1 class="heading">My To-Do List</h1>
+                <p class="notify">Please write something!</p>
+                <button class="okPopup btn btn-primary mg-x-auto">OK</button>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popupError">
+            <div class="popup-content col gap-20 text-center bg-white box-shadow pad-30 border-radius-10 box-shadow ">
+                <h1 class="heading">My To-Do List</h1>
+                <p class="notify">Please write correct!</p>
+                <button class="okPopup btn btn-primary mg-x-auto">OK</button>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popupDelete">
+            <div class="popup-content col gap-20 text-center bg-white box-shadow pad-30 border-radius-10 box-shadow ">
+                <h1 class="heading">My To-Do List</h1>
+                <p class="notify">Are you sure to Delete!</p>
+                <div class="flex gap-20 space-between">
+                    <button class="okPopup btn btn-primary mg-x-auto">OK</button>
+                    <button class="cancelPopup btn btn-danger mg-x-auto">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popupDeleteAll">
+            <div class="popup-content col gap-20 text-center bg-white box-shadow pad-30 border-radius-10 box-shadow ">
+                <h1 class="heading">My To-Do List</h1>
+                <p class="notify">Are you sure to Delete All!</p>
+                <div class="flex gap-20 space-between">
+                    <button class="okPopup btn btn-primary">OK</button>
+                    <button class="cancelPopup btn btn-danger">Cancel</button>
+                </div>
+            </div>
+        </div>
+        <div class="popup-overlay" id="popupEdit">
+            <div
+                class="popup-content col gap-20 text-center bg-white box-shadow pad-30 mg-x-auto max-w-1000 border-radius-10 box-shadow ">
+                <h1 class="heading">My To-Do List</h1>
+                <form action="summit" class="col gap-20" id="editForm">
+                    <h2>Edit this List:</h2>
+                    <div class="flex gap-20">
+                        <input type="text" class="flex-1" id="editList">
+                        <div class="flex gap-20 space-between">
+                            <button class="btn btn-primary" id="Edit">Edit</button>
+                            <button class="cancelPopup btn btn-danger mg-x-auto">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
     <script src="assect/js/main.js"></script>
 </body>
 
