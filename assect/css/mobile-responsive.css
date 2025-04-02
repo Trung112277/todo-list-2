@@ -1,0 +1,47 @@
+@media (max-width: 767px) {
+
+    /* BASE STYLES */
+    li {
+        flex-direction: column;
+        padding: 15px;
+        align-items: unset;
+        gap: 15px;
+    }
+
+    /* LAYOUT  */
+    .mobile\:col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .mobile\:space-center {
+        justify-content: center;
+    }
+
+    .mobile\:w-full {
+        width: 100%;
+    }
+
+    .mobile\:max-w-none {
+        max-width: none;
+    }
+
+    .mobile\:min-h-50 {
+        min-height: 50px;
+    }
+
+    .mobile\:gap-10 {
+        gap: 10px;
+    }
+
+    /* UTILITIES */
+    .mobile\:text-center {
+        text-align: center;
+    }
+
+    /* COMPONENTS */
+    .check-box {
+        width: 12px;
+        height: 12px;
+    }
+}
