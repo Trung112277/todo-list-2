@@ -262,7 +262,7 @@ option[value="medium"] {
     color: var(--color-orange);
 }
 
-option[value="hight"] {
+option[value="high"] {
     background-color: var(--color-light-red);
     color: var(--color-red);
 }
