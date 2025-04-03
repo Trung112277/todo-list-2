@@ -5,6 +5,11 @@ const PRIORITY_COLORS = {
     high: { text: '#c62828', bg: '#ffebee' }
 };
 
+const SELECT_ALL_TEXT = {
+    SELECT: 'Select All',
+    DESELECT: 'Deselect All'
+};
+
 const DEFAULT_COLOR = { text: '#212529', bg: '#ffffff' };
 
 /* ==================== STATE MANAGEMENT ==================== */
@@ -18,6 +23,9 @@ const DOM = {
     addForm: document.getElementById('addForm'),
     addFormSelect: document.getElementById('priority'),
     inputList: document.getElementById('inputList'),
+
+    // Actions
+    selectAllBtn: document.getElementById('selectAllItems'),
 
     // List container
     listItems: document.getElementById('listItems'),
@@ -77,6 +85,7 @@ const renderTodos = () => {
     `).join('');
 
     initEventHandlers();
+    updateSelectAllButton();
 };
 
 /* ==================== EVENT HANDLERS ==================== */
@@ -110,6 +119,33 @@ const initCheckboxHandlers = () => {
     document.querySelectorAll('.check-box').forEach(checkbox => {
         checkbox.addEventListener('change', handleCheckboxChange);
     });
+};
+
+const initSelectAllHandler = () => {
+    if (!DOM.selectAllBtn) return;
+
+    DOM.selectAllBtn.addEventListener('click', handleSelectAll);
+};
+
+/* ==================== SELECT ALL LOGIC ==================== */
+const handleSelectAll = () => {
+    const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
+    const newCompletionState = !isAllCompleted;
+
+    state.todos.forEach(todo => {
+        todo.completed = newCompletionState;
+    });
+
+    saveToLocalStorage();
+    renderTodos();
+};
+
+const updateSelectAllButton = () => {
+    if (!DOM.selectAllBtn) return;
+
+    const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
+    DOM.selectAllBtn.textContent = isAllCompleted ? SELECT_ALL_TEXT.DESELECT : SELECT_ALL_TEXT.SELECT;
+    DOM.selectAllBtn.classList.toggle('active', isAllCompleted);
 };
 
 /* ==================== BUSINESS LOGIC ==================== */
@@ -166,6 +202,7 @@ const handleCheckboxChange = function () {
         todo.completed = this.checked;
         li.classList.toggle('checked', this.checked);
         saveToLocalStorage();
+        updateSelectAllButton();
     }
 };
 
@@ -232,6 +269,7 @@ const init = () => {
         DOM.addForm.addEventListener('submit', handleAddTodo);
     }
 
+    initSelectAllHandler();
     renderTodos();
 };
 
