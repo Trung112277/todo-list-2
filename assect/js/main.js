@@ -34,6 +34,14 @@ const initEditHandlers = () => {
         btn.addEventListener('click', handleEditClick);
     });
 };
+const initDeleteHandlers = () => {
+    document.querySelectorAll('.delete-btn').forEach(button => {
+        button.addEventListener('click', function(e) {
+            const todoId = this.closest('li').dataset.id;
+            showDeletePopup(todoId);
+        });
+    });
+};
 
 const handleSelectChange = function () {
     // Cập nhật priority trong state
@@ -57,6 +65,31 @@ const handleEditClick = function (e) {
 
     // Hiển thị popup chỉnh sửa
     showEditPopup(todo);
+};
+// ADD TODO
+const handleAddTodo = (e) => {
+    e.preventDefault();
+    const text = DOM.inputList.value;
+    const priority = DOM.addFormSelect.value;
+
+    const validation = validateInput(text);
+    if (!validation.isValid) {
+        showPopup(validation.popup);
+        return;
+    }
+
+    // Thêm vào ĐẦU mảng 
+    state.todos.unshift({
+        id: generateId(),
+        text: text.trim(),
+        priority,
+        completed: false,
+        createdAt: new Date().toISOString()
+    });
+
+    DOM.inputList.value = '';
+    saveToLocalStorage();
+    renderTodos();
 };
 
 // UTILITY FUNCTIONS
@@ -117,6 +150,21 @@ const showEditPopup = (todo) => {
         popup.classList.remove('active');
     };
 };
+const showDeletePopup = (todoId) => {
+    const popup = document.getElementById('popupDelete');
+    popup.classList.add('active');
+
+    // Xử lý khi nhấn OK
+    popup.querySelector('.okPopup').onclick = () => {
+        deleteTodo(todoId);
+        popup.classList.remove('active');
+    };
+
+    // Xử lý khi nhấn Cancel
+    popup.querySelector('.cancelPopup').onclick = () => {
+        popup.classList.remove('active');
+    };
+};
 
 // SELECT STYLING
 const styleSelect = (selectElement) => {
@@ -125,6 +173,13 @@ const styleSelect = (selectElement) => {
     selectElement.style.color = text;
     selectElement.style.backgroundColor = bg;
     selectElement.style.borderColor = text;
+};
+
+// DELETE TODO
+const deleteTodo = (todoId) => {
+    state.todos = state.todos.filter(todo => todo.id !== todoId);
+    saveToLocalStorage();
+    renderTodos();
 };
 
 // RENDER TODOS
@@ -151,32 +206,7 @@ const renderTodos = () => {
 
     initSelectHandlers();
     initEditHandlers();
-};
-
-// ADD TODO
-const handleAddTodo = (e) => {
-    e.preventDefault();
-    const text = DOM.inputList.value;
-    const priority = DOM.addFormSelect.value;
-
-    const validation = validateInput(text);
-    if (!validation.isValid) {
-        showPopup(validation.popup);
-        return;
-    }
-
-    // Thêm vào ĐẦU mảng 
-    state.todos.unshift({
-        id: generateId(),
-        text: text.trim(),
-        priority,
-        completed: false,
-        createdAt: new Date().toISOString()
-    });
-
-    DOM.inputList.value = '';
-    saveToLocalStorage();
-    renderTodos();
+    initDeleteHandlers();
 };
 
 // INITIALIZATION
