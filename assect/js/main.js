@@ -36,9 +36,24 @@ const initEditHandlers = () => {
 };
 const initDeleteHandlers = () => {
     document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function(e) {
+        button.addEventListener('click', function (e) {
             const todoId = this.closest('li').dataset.id;
             showDeletePopup(todoId);
+        });
+    });
+};
+const initCheckboxHandlers = () => {
+    document.querySelectorAll('.check-box').forEach(checkbox => {
+        checkbox.addEventListener('change', function () {
+            const li = this.closest('li');
+            const todoId = li.dataset.id;
+            const todo = state.todos.find(t => t.id === todoId);
+
+            if (todo) {
+                todo.completed = this.checked;
+                li.classList.toggle('checked', this.checked);
+                saveToLocalStorage();
+            }
         });
     });
 };
@@ -204,6 +219,7 @@ const renderTodos = () => {
         </li>
     `).join('');
 
+    initCheckboxHandlers();
     initSelectHandlers();
     initEditHandlers();
     initDeleteHandlers();
