@@ -29,6 +29,11 @@ const initSelectHandlers = () => {
         select.addEventListener('change', handleSelectChange);
     });
 };
+const initEditHandlers = () => {
+    document.querySelectorAll('.edit-btn').forEach(btn => {
+        btn.addEventListener('click', handleEditClick);
+    });
+};
 
 const handleSelectChange = function () {
     // Cập nhật priority trong state
@@ -42,6 +47,16 @@ const handleSelectChange = function () {
 
     // Cập nhật màu
     styleSelect(this);
+};
+const handleEditClick = function (e) {
+    const li = e.target.closest('li');
+    const todoId = li.dataset.id;
+    const todo = state.todos.find(t => t.id === todoId);
+
+    if (!todo) return;
+
+    // Hiển thị popup chỉnh sửa
+    showEditPopup(todo);
 };
 
 // UTILITY FUNCTIONS
@@ -64,6 +79,43 @@ const showPopup = (popupId) => {
     const popup = document.getElementById(popupId);
     popup.classList.add('active');
     popup.querySelector('.okPopup').onclick = () => popup.classList.remove('active');
+};
+const showEditPopup = (todo) => {
+    const popup = document.getElementById('popupEdit');
+    const input = popup.querySelector('#editList');
+
+    // Điền giá trị hiện tại vào input
+    input.value = todo.text;
+
+    // Hiển thị popup
+    popup.classList.add('active');
+
+    // Xử lý khi submit form chỉnh sửa
+    const editForm = popup.querySelector('#editForm');
+    editForm.onsubmit = (e) => {
+        e.preventDefault();
+
+        const newText = input.value.trim();
+        const validation = validateInput(newText);
+
+        if (!validation.isValid) {
+            showPopup(validation.popup);
+            return;
+        }
+
+        // Cập nhật todo
+        todo.text = newText;
+        saveToLocalStorage();
+        renderTodos();
+
+        // Đóng popup
+        popup.classList.remove('active');
+    };
+
+    // Xử lý nút cancel
+    popup.querySelector('.cancelPopup').onclick = () => {
+        popup.classList.remove('active');
+    };
 };
 
 // SELECT STYLING
@@ -98,6 +150,7 @@ const renderTodos = () => {
     `).join('');
 
     initSelectHandlers();
+    initEditHandlers();
 };
 
 // ADD TODO
