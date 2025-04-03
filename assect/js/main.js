@@ -26,6 +26,7 @@ const DOM = {
 
     // Actions
     selectAllBtn: document.getElementById('selectAllItems'),
+    deleteAllBtn: document.getElementById('deleteAllItems'),
 
     // List container
     listItems: document.getElementById('listItems'),
@@ -34,6 +35,7 @@ const DOM = {
     popupEmpty: document.getElementById('popupEmpty'),
     popupError: document.getElementById('popupError'),
     popupDelete: document.getElementById('popupDelete'),
+    popupDeleteAll: document.getElementById('popupDeleteAll'),
     popupEdit: document.getElementById('popupEdit')
 };
 
@@ -127,6 +129,12 @@ const initSelectAllHandler = () => {
     DOM.selectAllBtn.addEventListener('click', handleSelectAll);
 };
 
+const initDeleteAllHandler = () => {
+    if (!DOM.deleteAllBtn) return;
+
+    DOM.deleteAllBtn.addEventListener('click', handleDeleteAll);
+};
+
 /* ==================== SELECT ALL LOGIC ==================== */
 const handleSelectAll = () => {
     const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
@@ -146,6 +154,26 @@ const updateSelectAllButton = () => {
     const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
     DOM.selectAllBtn.textContent = isAllCompleted ? SELECT_ALL_TEXT.DESELECT : SELECT_ALL_TEXT.SELECT;
     DOM.selectAllBtn.classList.toggle('active', isAllCompleted);
+};
+
+/* ==================== DELETE ALL LOGIC ==================== */
+const handleDeleteAll = () => {
+    showDeleteAllPopup();
+};
+
+const showDeleteAllPopup = () => {
+    const popup = DOM.popupDeleteAll;
+    popup.classList.add('active');
+
+    const onConfirm = () => {
+        state.todos = [];
+        saveToLocalStorage();
+        renderTodos();
+        popup.classList.remove('active');
+    };
+
+    popup.querySelector('.okPopup').onclick = onConfirm;
+    popup.querySelector('.cancelPopup').onclick = () => popup.classList.remove('active');
 };
 
 /* ==================== BUSINESS LOGIC ==================== */
@@ -270,6 +298,7 @@ const init = () => {
     }
 
     initSelectAllHandler();
+    initDeleteAllHandler();
     renderTodos();
 };
 
