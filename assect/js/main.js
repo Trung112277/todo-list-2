@@ -8,20 +8,23 @@ const PRIORITY_COLORS = {
 const FILTER_TYPES = {
     ALL: 'all',
     ACTIVE: 'active',
-    COMPLETED: 'completed'
+    COMPLETED: 'completed',
+    NONE: null
 };
 
 const SORT_TYPES = {
     A_TO_Z: 'a-z',
-    DEFAULT: null
+    Z_TO_A: 'z-a',
+    NONE: null
 };
 
 /* ==================== STATE MANAGEMENT ==================== */
 const state = {
     todos: JSON.parse(localStorage.getItem('todos')) || [],
-    currentFilter: FILTER_TYPES.ALL,
-    currentSort: SORT_TYPES.DEFAULT
+    currentFilter: FILTER_TYPES.NONE,
+    currentSort: SORT_TYPES.NONE
 };
+
 
 /* ==================== DOM ELEMENTS ==================== */
 const DOM = {
@@ -43,7 +46,8 @@ const DOM = {
 
     // Sort buttons
     sortButtons: {
-        aToZ: document.getElementById('filterA')
+        aToZ: document.getElementById('filterA'),
+        zToA: document.getElementById('filterZ')
     },
 
     // List container
@@ -81,27 +85,31 @@ const styleSelect = (selectElement) => {
     selectElement.style.borderColor = text;
 };
 
-/* ==================== SORT & FILTER FUNCTIONS ==================== */
-const sortTodos = (todos) => {
-    if (state.currentSort === SORT_TYPES.A_TO_Z) {
-        return [...todos].sort((a, b) => a.text.localeCompare(b.text));
-    }
-    return todos;
-};
+/* ==================== FILTER & SORT FUNCTIONS ==================== */
+const applyFiltersAndSort = () => {
+    let result = [...state.todos];
 
-const filterTodos = () => {
-    let filtered = state.todos;
-
+    // Apply filter
     switch (state.currentFilter) {
         case FILTER_TYPES.ACTIVE:
-            filtered = filtered.filter(todo => !todo.completed);
+            result = result.filter(todo => !todo.completed);
             break;
         case FILTER_TYPES.COMPLETED:
-            filtered = filtered.filter(todo => todo.completed);
+            result = result.filter(todo => todo.completed);
             break;
     }
 
-    return sortTodos(filtered);
+    // Apply sort
+    switch (state.currentSort) {
+        case SORT_TYPES.A_TO_Z:
+            result.sort((a, b) => a.text.localeCompare(b.text));
+            break;
+        case SORT_TYPES.Z_TO_A:
+            result.sort((a, b) => b.text.localeCompare(a.text));
+            break;
+    }
+
+    return result;
 };
 
 /* ==================== RENDER FUNCTIONS ==================== */
@@ -123,17 +131,21 @@ const renderTodoItem = (todo) => `
     </li>
 `;
 
-const renderTodos = () => {
-    const filteredTodos = filterTodos();
-
-    DOM.listItems.innerHTML = filteredTodos.map(renderTodoItem).join('');
-
-    // Update active states
-    DOM.sortButtons.aToZ.classList.toggle('active', state.currentSort === SORT_TYPES.A_TO_Z);
+const updateButtonStates = () => {
+    // Update filter buttons
     Object.entries(DOM.filterButtons).forEach(([type, button]) => {
         button.classList.toggle('active', state.currentFilter === type);
     });
 
+    // Update sort buttons
+    DOM.sortButtons.aToZ.classList.toggle('active', state.currentSort === SORT_TYPES.A_TO_Z);
+    DOM.sortButtons.zToA.classList.toggle('active', state.currentSort === SORT_TYPES.Z_TO_A);
+};
+
+const renderTodos = () => {
+    const filteredTodos = applyFiltersAndSort();
+    DOM.listItems.innerHTML = filteredTodos.map(renderTodoItem).join('');
+    updateButtonStates();
     initEventHandlers();
 };
 
@@ -184,30 +196,44 @@ const initEventHandlers = () => {
     });
 };
 
+const handleSortClick = (sortType) => {
+    // Nếu click vào sort đang active thì tắt sort
+    if (state.currentSort === sortType) {
+        state.currentSort = SORT_TYPES.NONE;
+    }
+    // Nếu click vào sort khác thì áp dụng sort mới
+    else {
+        state.currentSort = sortType;
+    }
+    renderTodos();
+};
+
 const initButtonHandlers = () => {
     // Filter buttons
     DOM.filterButtons.all.addEventListener('click', () => {
-        state.currentFilter = FILTER_TYPES.ALL;
+        state.currentFilter = state.currentFilter === FILTER_TYPES.ALL
+            ? FILTER_TYPES.NONE
+            : FILTER_TYPES.ALL;
         renderTodos();
     });
 
     DOM.filterButtons.active.addEventListener('click', () => {
-        state.currentFilter = FILTER_TYPES.ACTIVE;
+        state.currentFilter = state.currentFilter === FILTER_TYPES.ACTIVE
+            ? FILTER_TYPES.NONE
+            : FILTER_TYPES.ACTIVE;
         renderTodos();
     });
 
     DOM.filterButtons.completed.addEventListener('click', () => {
-        state.currentFilter = FILTER_TYPES.COMPLETED;
+        state.currentFilter = state.currentFilter === FILTER_TYPES.COMPLETED
+            ? FILTER_TYPES.NONE
+            : FILTER_TYPES.COMPLETED;
         renderTodos();
     });
 
-    // Sort A-Z button
-    DOM.sortButtons.aToZ.addEventListener('click', () => {
-        state.currentSort = state.currentSort === SORT_TYPES.A_TO_Z
-            ? SORT_TYPES.DEFAULT
-            : SORT_TYPES.A_TO_Z;
-        renderTodos();
-    });
+    // Sort buttons
+    DOM.sortButtons.aToZ.addEventListener('click', () => handleSortClick(SORT_TYPES.A_TO_Z));
+    DOM.sortButtons.zToA.addEventListener('click', () => handleSortClick(SORT_TYPES.Z_TO_A));
 
     // Select All button
     DOM.selectAllBtn.addEventListener('click', () => {
@@ -221,13 +247,16 @@ const initButtonHandlers = () => {
     DOM.deleteAllBtn.addEventListener('click', showDeleteAllPopup);
 };
 
+
+
 /* ==================== POPUP FUNCTIONS ==================== */
 const showPopup = (popupType) => {
     const popup = DOM.popups[popupType];
     if (!popup) return;
 
     popup.classList.add('active');
-    popup.querySelector('.okPopup').onclick = () => popup.classList.remove('active');
+    const okButton = popup.querySelector('.okPopup');
+    if (okButton) okButton.onclick = () => popup.classList.remove('active');
 };
 
 const showEditPopup = (todo) => {
