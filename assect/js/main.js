@@ -176,6 +176,12 @@ const initFilterHandlers = () => {
         state.currentFilter = FILTER_TYPES.ACTIVE;
         renderTodos();
     });
+
+    // Xử lý nút COMPLETED
+    DOM.filterButtons.completed.addEventListener('click', () => {
+        state.currentFilter = FILTER_TYPES.COMPLETED;
+        renderTodos();
+    });
 };
 
 /* ==================== UPDATE FUNCTIONS ==================== */
