@@ -10,11 +10,18 @@ const SELECT_ALL_TEXT = {
     DESELECT: 'Deselect All'
 };
 
+const FILTER_TYPES = {
+    ALL: 'all',
+    ACTIVE: 'active',
+    COMPLETED: 'completed'
+};
+
 const DEFAULT_COLOR = { text: '#212529', bg: '#ffffff' };
 
 /* ==================== STATE MANAGEMENT ==================== */
 const state = {
-    todos: JSON.parse(localStorage.getItem('todos')) || []
+    todos: JSON.parse(localStorage.getItem('todos')) || [],
+    currentFilter: FILTER_TYPES.ALL
 };
 
 /* ==================== DOM ELEMENTS ==================== */
@@ -27,6 +34,13 @@ const DOM = {
     // Actions
     selectAllBtn: document.getElementById('selectAllItems'),
     deleteAllBtn: document.getElementById('deleteAllItems'),
+
+    // Filter buttons
+    filterButtons: {
+        all: document.getElementById('allItems'),
+        active: document.getElementById('activeItems'),
+        completed: document.getElementById('completedItems')
+    },
 
     // List container
     listItems: document.getElementById('listItems'),
@@ -53,6 +67,18 @@ const validateInput = (text) => {
     return { isValid: true };
 };
 
+/* ==================== FILTER FUNCTIONS ==================== */
+const filterTodos = () => {
+    switch (state.currentFilter) {
+        case FILTER_TYPES.ACTIVE:
+            return state.todos.filter(todo => !todo.completed);
+        case FILTER_TYPES.COMPLETED:
+            return state.todos.filter(todo => todo.completed);
+        default:
+            return state.todos;
+    }
+};
+
 /* ==================== DOM MANIPULATION ==================== */
 const styleSelect = (selectElement) => {
     const priority = selectElement.value;
@@ -68,7 +94,9 @@ const styleSelect = (selectElement) => {
 const renderTodos = () => {
     if (!DOM.listItems) return;
 
-    DOM.listItems.innerHTML = state.todos.map(todo => `
+    const filteredTodos = filterTodos();
+
+    DOM.listItems.innerHTML = filteredTodos.map(todo => `
       <li data-id="${todo.id}" class="${todo.completed ? 'checked' : ''}">
         <label class="flex gap-20 mobile:gap-10">
           <input type="checkbox" class="check-box" ${todo.completed ? 'checked' : ''}>
@@ -87,6 +115,7 @@ const renderTodos = () => {
     `).join('');
 
     initEventHandlers();
+    updateActiveFilterButtons();
     updateSelectAllButton();
 };
 
@@ -125,29 +154,24 @@ const initCheckboxHandlers = () => {
 
 const initSelectAllHandler = () => {
     if (!DOM.selectAllBtn) return;
-
     DOM.selectAllBtn.addEventListener('click', handleSelectAll);
 };
 
 const initDeleteAllHandler = () => {
     if (!DOM.deleteAllBtn) return;
-
     DOM.deleteAllBtn.addEventListener('click', handleDeleteAll);
 };
 
-/* ==================== SELECT ALL LOGIC ==================== */
-const handleSelectAll = () => {
-    const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
-    const newCompletionState = !isAllCompleted;
+const initFilterHandlers = () => {
+    if (!DOM.filterButtons.all) return;
 
-    state.todos.forEach(todo => {
-        todo.completed = newCompletionState;
+    DOM.filterButtons.all.addEventListener('click', () => {
+        state.currentFilter = FILTER_TYPES.ALL;
+        renderTodos();
     });
-
-    saveToLocalStorage();
-    renderTodos();
 };
 
+/* ==================== UPDATE FUNCTIONS ==================== */
 const updateSelectAllButton = () => {
     if (!DOM.selectAllBtn) return;
 
@@ -156,24 +180,12 @@ const updateSelectAllButton = () => {
     DOM.selectAllBtn.classList.toggle('active', isAllCompleted);
 };
 
-/* ==================== DELETE ALL LOGIC ==================== */
-const handleDeleteAll = () => {
-    showDeleteAllPopup();
-};
-
-const showDeleteAllPopup = () => {
-    const popup = DOM.popupDeleteAll;
-    popup.classList.add('active');
-
-    const onConfirm = () => {
-        state.todos = [];
-        saveToLocalStorage();
-        renderTodos();
-        popup.classList.remove('active');
-    };
-
-    popup.querySelector('.okPopup').onclick = onConfirm;
-    popup.querySelector('.cancelPopup').onclick = () => popup.classList.remove('active');
+const updateActiveFilterButtons = () => {
+    Object.entries(DOM.filterButtons).forEach(([type, button]) => {
+        if (button) {
+            button.classList.toggle('active', state.currentFilter === type);
+        }
+    });
 };
 
 /* ==================== BUSINESS LOGIC ==================== */
@@ -234,6 +246,22 @@ const handleCheckboxChange = function () {
     }
 };
 
+const handleSelectAll = () => {
+    const isAllCompleted = state.todos.length > 0 && state.todos.every(todo => todo.completed);
+    const newCompletionState = !isAllCompleted;
+
+    state.todos.forEach(todo => {
+        todo.completed = newCompletionState;
+    });
+
+    saveToLocalStorage();
+    renderTodos();
+};
+
+const handleDeleteAll = () => {
+    showDeleteAllPopup();
+};
+
 /* ==================== POPUP MANAGEMENT ==================== */
 const showPopup = (popupId) => {
     const popup = document.getElementById(popupId);
@@ -285,6 +313,21 @@ const showDeletePopup = (todoId) => {
     popup.querySelector('.cancelPopup').onclick = () => popup.classList.remove('active');
 };
 
+const showDeleteAllPopup = () => {
+    const popup = DOM.popupDeleteAll;
+    popup.classList.add('active');
+
+    const onConfirm = () => {
+        state.todos = [];
+        saveToLocalStorage();
+        renderTodos();
+        popup.classList.remove('active');
+    };
+
+    popup.querySelector('.okPopup').onclick = onConfirm;
+    popup.querySelector('.cancelPopup').onclick = () => popup.classList.remove('active');
+};
+
 /* ==================== INITIALIZATION ==================== */
 const init = () => {
     // Initialize form elements
@@ -299,6 +342,7 @@ const init = () => {
 
     initSelectAllHandler();
     initDeleteAllHandler();
+    initFilterHandlers();
     renderTodos();
 };
 
