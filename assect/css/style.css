@@ -295,3 +295,8 @@ option[value="high"] {
     opacity: 1;
     display: flex;
 }
+
+.btn.active {
+    background-color: var(--color-blue-1);
+    color: white;
+}

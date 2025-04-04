@@ -165,8 +165,15 @@ const initDeleteAllHandler = () => {
 const initFilterHandlers = () => {
     if (!DOM.filterButtons.all) return;
 
+    // Xử lý nút ALL
     DOM.filterButtons.all.addEventListener('click', () => {
         state.currentFilter = FILTER_TYPES.ALL;
+        renderTodos();
+    });
+
+    // Xử lý nút ACTIVE
+    DOM.filterButtons.active.addEventListener('click', () => {
+        state.currentFilter = FILTER_TYPES.ACTIVE;
         renderTodos();
     });
 };
