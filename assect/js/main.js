@@ -12,6 +12,14 @@ const FILTER_TYPES = {
     NONE: null
 };
 
+const PRIORITY_FILTER_TYPES = {
+    NONE: null,
+    HIGH: 'high',
+    MEDIUM: 'medium',
+    LOW: 'low'
+};
+
+
 const SORT_TYPES = {
     A_TO_Z: 'a-z',
     Z_TO_A: 'z-a',
@@ -22,9 +30,9 @@ const SORT_TYPES = {
 const state = {
     todos: JSON.parse(localStorage.getItem('todos')) || [],
     currentFilter: FILTER_TYPES.NONE,
+    currentPriorityFilter: PRIORITY_FILTER_TYPES.NONE,
     currentSort: SORT_TYPES.NONE
 };
-
 
 /* ==================== DOM ELEMENTS ==================== */
 const DOM = {
@@ -49,6 +57,7 @@ const DOM = {
         aToZ: document.getElementById('filterA'),
         zToA: document.getElementById('filterZ')
     },
+    priorityFilterBtn: document.getElementById('filterPriority'),
 
     // List container
     listItems: document.getElementById('listItems'),
@@ -89,13 +98,26 @@ const styleSelect = (selectElement) => {
 const applyFiltersAndSort = () => {
     let result = [...state.todos];
 
-    // Apply filter
+    // Apply status filter (All/Active/Completed)
     switch (state.currentFilter) {
         case FILTER_TYPES.ACTIVE:
             result = result.filter(todo => !todo.completed);
             break;
         case FILTER_TYPES.COMPLETED:
             result = result.filter(todo => todo.completed);
+            break;
+    }
+
+    // Apply priority filter
+    switch (state.currentPriorityFilter) {
+        case PRIORITY_FILTER_TYPES.HIGH:
+            result = result.filter(todo => todo.priority === 'high');
+            break;
+        case PRIORITY_FILTER_TYPES.MEDIUM:
+            result = result.filter(todo => todo.priority === 'medium');
+            break;
+        case PRIORITY_FILTER_TYPES.LOW:
+            result = result.filter(todo => todo.priority === 'low');
             break;
     }
 
@@ -111,6 +133,7 @@ const applyFiltersAndSort = () => {
 
     return result;
 };
+
 
 /* ==================== RENDER FUNCTIONS ==================== */
 const renderTodoItem = (todo) => `
@@ -140,6 +163,18 @@ const updateButtonStates = () => {
     // Update sort buttons
     DOM.sortButtons.aToZ.classList.toggle('active', state.currentSort === SORT_TYPES.A_TO_Z);
     DOM.sortButtons.zToA.classList.toggle('active', state.currentSort === SORT_TYPES.Z_TO_A);
+
+    DOM.priorityFilterBtn.classList.toggle('active', state.currentPriorityFilter !== PRIORITY_FILTER_TYPES.NONE);
+
+    // Thêm indicator hiển thị loại priority filter đang áp dụng
+    DOM.priorityFilterBtn.innerHTML = 'Priority';
+    if (state.currentPriorityFilter === PRIORITY_FILTER_TYPES.HIGH) {
+        DOM.priorityFilterBtn.innerHTML += ' (High)';
+    } else if (state.currentPriorityFilter === PRIORITY_FILTER_TYPES.MEDIUM) {
+        DOM.priorityFilterBtn.innerHTML += ' (Medium)';
+    } else if (state.currentPriorityFilter === PRIORITY_FILTER_TYPES.LOW) {
+        DOM.priorityFilterBtn.innerHTML += ' (Low)';
+    }
 };
 
 const renderTodos = () => {
@@ -234,6 +269,25 @@ const initButtonHandlers = () => {
     // Sort buttons
     DOM.sortButtons.aToZ.addEventListener('click', () => handleSortClick(SORT_TYPES.A_TO_Z));
     DOM.sortButtons.zToA.addEventListener('click', () => handleSortClick(SORT_TYPES.Z_TO_A));
+
+    // Priority filter 
+    DOM.priorityFilterBtn.addEventListener('click', () => {
+        switch (state.currentPriorityFilter) {
+            case PRIORITY_FILTER_TYPES.NONE:
+                state.currentPriorityFilter = PRIORITY_FILTER_TYPES.HIGH;
+                break;
+            case PRIORITY_FILTER_TYPES.HIGH:
+                state.currentPriorityFilter = PRIORITY_FILTER_TYPES.MEDIUM;
+                break;
+            case PRIORITY_FILTER_TYPES.MEDIUM:
+                state.currentPriorityFilter = PRIORITY_FILTER_TYPES.LOW;
+                break;
+            case PRIORITY_FILTER_TYPES.LOW:
+                state.currentPriorityFilter = PRIORITY_FILTER_TYPES.NONE;
+                break;
+        }
+        renderTodos();
+    });
 
     // Select All button
     DOM.selectAllBtn.addEventListener('click', () => {
