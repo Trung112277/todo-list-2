@@ -82,6 +82,9 @@ const saveToLocalStorage = () => {
 const validateInput = (text) => {
     if (!text) return { isValid: false, popup: 'empty' };
     if (/^\s+$/.test(text)) return { isValid: false, popup: 'error' };
+    if (/<[a-z][\s\S]*>/i.test(text) || /<\/?[a-z][\s\S]*>/i.test(text)) return { isValid: false, popup: 'error' };
+    if (!/[a-zA-Z0-9À-ỹ]/.test(text)) return { isValid: false, popup: 'error' };
+
     return { isValid: true };
 };
 
