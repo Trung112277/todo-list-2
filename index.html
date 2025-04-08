@@ -6,50 +6,56 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>To-Do List</title>
     <link rel="stylesheet" href="assect/css/style.css">
+    <link rel="stylesheet" href="assect/css/tablet-responsive.css">
     <link rel="stylesheet" href="assect/css/mobile-responsive.css">
 </head>
 
 <body>
     <div class="container">
-        <div class="text-center mg-bot-30">
+        <header class="text-center mg-bot-30">
             <h1 class="heading">My To-Do List</h1>
             <p>Stay organized and productive</p>
-        </div>
-        <div class="bg-white border-radius-10 box-shadow pad-30 col gap-20">
+        </header>
+        <main class="bg-white border-radius-10 box-shadow pad-30 col gap-20">
             <form action="summit" class="flex gap-20 mobile:col" id="addForm">
-                <input type="text" placeholder="Add a new task..." class="flex-1 mobile:w-full mobile:min-h-50 "
+                <input type="text" placeholder="Add a new task..." class="flex-1 mobile:w-full mobile:min-h-50"
                     id="inputList">
                 <select name="priority" id="priority" class="mobile:w-full mobile:min-h-50">
                     <option value="low">Low Priority</option>
                     <option value="medium" selected>Medium Priority</option>
                     <option value="high">High Priority</option>
                 </select>
-                <button class="btn btn-primary max-w-200 mobile:w-full mobile:max-w-none mobile:min-h-50 "
+                <button class="btn btn-primary max-w-200 mobile:w-full mobile:max-w-none mobile:min-h-50"
                     id="addBtn">Add</button>
             </form>
             <div class="col gap-20">
-                <div class="flex gap-20 mobile:col">
-                    <h2 class="mobile:w-full mobile:text-center">Status:</h2>
-                    <button class="btn btn-outline mobile:w-full " id="allItems">All</button>
-                    <button class="btn btn-outline mobile:w-full " id="activeItems">Active</button>
-                    <button class="btn btn-outline mobile:w-full " id="completedItems">Completed</button>
+                <div class="col gap-15">
+                    <h2 class="text-center sub-heading">Filter</h2>
+                    <div class="flex space-between gap-20 boder border-radius-10 pad-20 tablet:col">
+                        <div class="flex gap-20 mobile:col mobile:w-full">
+                            <button class="btn btn-outline mobile:w-full" id="allItems">All</button>
+                            <button class="btn btn-outline mobile:w-full" id="activeItems">Active</button>
+                            <button class="btn btn-outline mobile:w-full" id="completedItems">Completed</button>
+                        </div>
+                        <div class="flex gap-20 mobile:col mobile:w-full">
+                            <button class="btn btn-outline mobile:w-full" id="filterA">A - Z</button>
+                            <button class="btn btn-outline mobile:w-full" id="filterZ">Z - A</button>
+                            <button class="btn btn-outline mobile:w-full" id="filterPriority">Priority</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex gap-20 mobile:col">
-                    <h2 class="mobile:w-full mobile:text-center">Filter:</h2>
-                    <button class="btn btn-outline  mobile:w-full" id="filterA">A - Z</button>
-                    <button class="btn btn-outline  mobile:w-full" id="filterZ">Z - A</button>
-                    <button class="btn btn-outline  mobile:w-full" id="filterPriority">Priority</button>
-                </div>
-                <div class="flex gap-20 mobile:col">
-                    <h2 class="mobile:w-full mobile:text-center">Actions:</h2>
-                    <button class="btn btn-outline  mobile:w-full" id="selectAllItems">Select All</button>
-                    <button class="btn btn-danger  mobile:w-full" id="deleteAllItems">Delete All</button>
+                <div class="col gap-15">
+                    <h2 class="text-center sub-heading">Actions</h2>
+                    <div class="flex gap-20 justify-center boder border-radius-10 pad-20 mobile:col">
+                        <button class="btn btn-outline mobile:w-full" id="selectAllItems">Select All</button>
+                        <button class="btn btn-danger mobile:w-full" id="deleteAllItems">Delete All</button>
+                    </div>
                 </div>
             </div>
             <ul class="col gap-10" id="listItems">
-               
+
             </ul>
-        </div>
+        </main>
         <div id="popup">
             <div class="popup-overlay" id="popupEmpty">
                 <div

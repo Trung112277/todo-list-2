@@ -39,6 +39,10 @@
         text-align: center;
     }
 
+    .mobile\:clamp {
+        -webkit-line-clamp: 3;
+    }
+
     /* COMPONENTS */
     .check-box {
         width: 12px;

@@ -1,0 +1,13 @@
+@media (max-width: 1024px) {
+    /* BASE STYLES */
+
+    /* LAYOUT  */
+    .tablet\:col {
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* UTILITIES */
+
+    /* COMPONENTS */
+}

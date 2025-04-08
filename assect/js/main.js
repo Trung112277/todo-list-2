@@ -141,9 +141,9 @@ const applyFiltersAndSort = () => {
 /* ==================== RENDER FUNCTIONS ==================== */
 const renderTodoItem = (todo) => `
     <li data-id="${todo.id}" class="${todo.completed ? 'checked' : ''}">
-        <label class="flex gap-20 mobile:gap-10">
+        <label class="flex gap-15 mobile:gap-10">
             <input type="checkbox" class="check-box" ${todo.completed ? 'checked' : ''}>
-            ${todo.text}
+        <p class="clamp mobile:clamp" >${todo.text}</p>
         </label>
         <div class="flex gap-20 mobile:space-center">
             <select class="select-item">

@@ -84,6 +84,7 @@ li {
     background-color: var(--color-white-1);
     justify-content: space-between;
     cursor: pointer;
+    gap: 15px;
 }
 
 li:hover {
@@ -102,7 +103,7 @@ label {
 .container {
     width: 100%;
     max-width: 1050px;
-    padding: 0 25px;
+    padding: 25px;
     margin: auto;
 }
 
@@ -120,12 +121,24 @@ label {
     justify-content: space-between;
 }
 
+.justify-center {
+    justify-content: center;
+}
+
 .gap-10 {
     gap: 10px;
 }
 
+.gap-15 {
+    gap: 15px;
+}
+
 .gap-20 {
     gap: 20px;
+}
+
+.pad-20 {
+    padding: 20px;
 }
 
 .pad-30 {
@@ -163,6 +176,10 @@ label {
     background-color: var(--color-white-3);
 }
 
+.boder {
+    border: 1px solid var(--primar-color);
+}
+
 .border-radius-10 {
     border-radius: 10px;
 }
@@ -171,11 +188,23 @@ label {
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
 }
 
+.clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    -webkit-line-clamp: 2;
+}
+
 /* COMPONENTS */
 .heading {
     color: var(--primar-color);
     margin-bottom: 10px;
     font-size: 40px;
+}
+
+.sub-heading {
+    color: var(--primar-color);
+    font-size: 35px;
 }
 
 .btn {
@@ -214,8 +243,10 @@ label {
 }
 
 .check-box {
-    width: 20px;
-    height: 20px;
+    min-width: 20px;
+    max-width: 20px;
+    min-height: 20px;
+    max-height: 20px;
     cursor: pointer;
 }
 
